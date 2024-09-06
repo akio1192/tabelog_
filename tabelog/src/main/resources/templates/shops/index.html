@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">    
+    <head>
+        <div th:replace="~{fragment :: meta}"></div>   
+             
+        <div th:replace="~{fragment :: styles}"></div>
+          
+        <title>店舗一覧</title>   
+    </head>
+    <body>
+        <div class="tabelog-wrapper">
+            <!-- ヘッダー -->
+            <div th:replace="~{fragment :: header}"></div>
+            
+            <main>
+                <div class="container tabelog-container pb-5">
+                    <div class="row justify-content-center">
+                        <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">                        
+                                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">店舗一覧</li>
+                            </ol>
+                        </nav>         
+            
+                        <div class="col-xl-3 col-lg-4 col-md-12">               
+                            <form method="get" th:action="@{/shops}" class="w-100 mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・目的地">
+                                    <button type="submit" class="btn text-white shadow-sm tabelog-btn">検索</button> 
+                                </div>               
+                            </form>
+            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    名古屋エリアから探す
+                                </div>
+                                <div class="card-body">
+                                    <form method="get" th:action="@{/shops}" class="w-100">
+                                        <div class="form-group mb-3">
+                                            <select class="form-control form-select" name="area">  
+                                                <option value="" hidden>選択してください</option>   
+                                                <option value="中区" th:selected="${area == '中区'}">中区</option>
+                                                <option value="中村区" th:selected="${area == '中村区'}">中村区</option>
+                                                <option value="千種区" th:selected="${area == '千種区'}">千種区</option>
+                                                <option value="名東区" th:selected="${area == '名東区'}">名東区</option>
+                                                <option value="東区" th:selected="${area == '東区'}">東区</option>
+                                                <option value="西区" th:selected="${area == '西区'}">西区</option>
+                                                <option value="北区" th:selected="${area == '北区'}">北区</option>
+                                                <option value="昭和区" th:selected="${area == '昭和区'}">昭和区</option>
+                                                <option value="瑞穂区" th:selected="${area == '瑞穂区'}">瑞穂区</option>
+                                                <option value="熱田区" th:selected="${area == '熱田区'}">熱田区</option>
+                                                <option value="中川区" th:selected="${area == '中川区'}">中川区</option>
+                                                <option value="港区" th:selected="${area == '港区'}">港区</option>
+                                                <option value="南区" th:selected="${area == '南区'}">南区</option>
+                                                <option value="守山区" th:selected="${area == '守山区'}">守山区</option>
+                                                <option value="緑区" th:selected="${area == '緑区'}">緑区</option>
+                                                <option value="名東区" th:selected="${area == '名東区'}">名東区</option>
+                                                <option value="天白区" th:selected="${area == '天白区'}">天白区</option>                                 
+                                            </select> 
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn">検索</button>
+                                        </div>                                           
+                                    </form>
+                                </div>
+                            </div>                
+            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    予算から探す
+                                </div>
+                                <div class="card-body">
+                                    <form method="get" th:action="@{/shops}" class="w-100">
+                                        <div class="form-group mb-3">    
+                                            <select class="form-control form-select" name="price">
+                                                <option value="" hidden>選択してください</option> 
+                                                <option value="1000" th:selected="${price == 1000}">1,000円以内</option>
+                                                <option value="2000" th:selected="${price == 2000}">2,000円以内</option>
+                                                <option value="3000" th:selected="${price == 3000}">3,000円以内</option>
+                                                <option value="4000" th:selected="${price == 4000}">4,000円以内</option>
+                                                <option value="5000" th:selected="${price == 5000}">5,000円以内</option>
+                                                <option value="6000" th:selected="${price == 6000}">6,000円以内</option>
+                                            </select>                                                                                
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn text-white shadow-sm w-100 tabelog-btn">検索</button>
+                                        </div>                                           
+                                    </form>
+                                </div>
+                            </div>                               
+                        </div>
+            
+                        <div class="col">                                                                          
+                            <div class="d-flex justify-content-between flex-wrap">                                
+                                <p th:if="${shopPage.getTotalPages() > 1}" class="fs-5 mb-3" th:text="${'検索結果：' + shopPage.getTotalElements() + '件' + '（' + (shopPage.getNumber() + 1) + ' / ' + shopPage.getTotalPages() + ' ページ）'}"></p> 
+                                <p th:unless="${shopPage.getTotalPages() > 1}" class="fs-5 mb-3" th:text="${'検索結果：' + shopPage.getTotalElements() + '件'}"></p>
+                                
+                                <form method="get" th:action="@{/shops}" class="mb-3 tabelog-sort-box"> 
+                                     <input th:if="${keyword}" type="hidden" name="keyword" th:value="${keyword}">
+                                     <input th:if="${area}" type="hidden" name="area" th:value="${area}">
+                                     <input th:if="${price}" type="hidden" name="price" th:value="${price}">                                      
+                                     <select class="form-select form-select-sm" name="order" onChange="this.form.submit();">
+                                         <option value="createdAtDesc" th:selected="${order == 'createdAtDesc' || order == null}">新着順</option>                                            
+                                         <option value="priceAsc" th:selected="${order == 'priceAsc'}">価格が安い順</option>
+                                     </select>   
+                                 </form>                                   
+                            </div>   
+                                                                        
+                            <div class="mb-3" th:each="shop : ${shopPage}">
+                                <a th:href="@{/shops/__${shop.shopId}__}" class="link-dark tabelog-card-link">
+                                    <div class="card h-100">   
+                                        <div class="row g-0">
+                                            <div class="col-md-4">                                                                                
+                                                <img th:if="${shop.getImageName()}" th:src="@{/storage/__${shop.getImageName()}__}" class="card-img-top tabelog-horizontal-card-image" alt="店舗画像">                                                     
+                                                <img th:unless="${shop.getImageName()}" th:src="@{/images/noImage.png}" class="card-img-top tabelog-horizontal-card-image" alt="NO IMAGE">                                                    
+                                            </div> 
+                                            <div class="col-md-8">                                                                                                                        
+                                                <div class="card-body">                                    
+                                                    <h3 class="card-title mb-3" th:text="${shop.getName()}"></h3>                                            
+ 
+                                                    <hr class="mb-3">
+                                                    
+                                                    <p class="card-text mb-2">
+                                                        <span th:text="${shop.getDescription()}"></span>
+                                                    </p>                                                    
+                                                    
+                                                    <p class="card-text mb-2">
+                                                        <small class="text-muted" th:text="${'〒' + shop.getPostalCode()}"></small>
+                                                        <small class="text-muted" th:text="${shop.getAddress()}"></small>                                                      
+                                                    </p>   
+                                                                                                                                                                                                                                    
+                                                    <p class="card-text">
+                                                        <span th:text="${#numbers.formatInteger(shop.getPrice(), 1, 'COMMA') + '円 / 人'}"></span>
+                                                    </p>                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>    
+                                </a>            
+                            </div>                                                                                       
+          					<div th:if="${shopPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+    					<nav aria-label="店舗一覧ページ">
+        					<ul class="pagination">
+							    <li class="page-item">
+							        <span th:if="${shopPage.isFirst()}" class="page-link disabled">前</span>
+							        <a th:unless="${shopPage.isFirst()}" th:href="@{/shops(page = ${shopPage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}" class="page-link tabelog-page-link">前</a>
+							    </li>
+							    <li th:each="i : ${#numbers.sequence(0, shopPage.getTotalPages() - 1)}" class="page-item">
+							        <span th:if="${i == shopPage.getNumber()}" class="page-link active tabelog-active" th:text="${i + 1}"></span>
+							        <a th:unless="${i == shopPage.getNumber()}" th:href="@{/shops(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}" class="page-link tabelog-page-link" th:text="${i + 1}"></a>
+							    </li>
+							    <li class="page-item">                        
+							        <span th:if="${shopPage.isLast()}" class="page-link disabled">次</span>
+							        <a th:unless="${shopPage.isLast()}" th:href="@{/shops(page = ${shopPage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}" class="page-link tabelog-page-link">次</a>
+							    </li>
+							</ul>
+    					</nav>
+					</div>                               
+                        </div>
+                    </div>
+                </div>  
+            </main>
+            
+            <!-- フッター -->
+            <div th:replace="~{fragment :: footer}"></div>
+        </div>    
+        
+        <div th:replace="~{fragment :: scripts}"></div>  
+  </body>
+</html>

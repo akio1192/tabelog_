@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+         <meta charset="UTF-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+         <div th:replace="~{fragment :: meta}"></div>   
+              
+         <div th:replace="~{fragment :: styles}"></div>
+        
+        <title>NAGOYAMESHI</title>	
+    </head>
+    <body>
+         <div class="tabelog-wrapper">
+             <!-- ヘッダー -->
+             <div th:replace="~{fragment :: header}"></div>
+             
+             <main>
+                 <div class="container pt-4 pb-5 tabelog-container">
+                     <div th:if="${param.loggedIn}" class="alert alert-info">
+                         ログインしました。
+                     </div>  
+                     
+                     <div th:if="${param.loggedOut}" class="alert alert-info">
+                         ログアウトしました。
+                     </div>
+                     <div th:if="${successMessage}" class="alert alert-info">
+                         <span th:text="${successMessage}"></span>
+                     </div>  
+                     
+              	<div class="d-flex justify-content-center">                                            
+    <form method="get" th:action="@{/shops}" class="mb-5 tabelog-search-form">
+        <div class="input-group">
+            <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="店舗名・目的地">
+            <button type="submit" class="btn text-white shadow-sm tabelog-btn">検索</button> 
+        </div>               
+    </form>                        
+</div>                                                                                                  
+                                                      
+<h2 class="text-center mb-3">新着</h2>
+<div class="row row-cols-lg-5 row-cols-2 g-3 mb-5">                                        
+    <div class="col" th:each="newShop : ${newShops}">
+        <a th:href="@{/shops/__${newShop.shopId}__}" class="link-dark tabelog-card-link">
+            <div class="card h-100">                                                                        
+                <img th:if="${newShop.getImageName()}" th:src="@{/storage/__${newShop.getImageName()}__}" class="card-img-top tabelog-vertical-card-image" alt="店舗画像">                                     
+                <img th:unless="${newShop.getImageName()}" th:src="@{/images/noImage.png}" class="card-img-top tabelog-vertical-card-image" alt="NO IMAGE">                                                                                                                        
+                <div class="card-body">                                    
+                    <h3 class="card-title" th:text="${newShop.getName()}"></h3>
+                    <p class="card-text mb-1">
+                        <small class="text-muted" th:text="${newShop.getAddress()}"></small>                                            
+                    </p>
+                    <p class="card-text">
+                        <span th:text="${#numbers.formatInteger(newShop.getPrice(), 1, 'COMMA') + '円'}"></span>                                            
+                    </p>                                    
+                </div>
+            </div>    
+        </a>            
+    </div>                                               
+</div>
+<div class="row justify-content-center">
+    <div class="col-xl-5 col-lg-6 col-md-8">                    
+        <h2 class="text-center mb-3">エリアから探す</h2>                                        
+        <table class="table">
+            <tbody>                                                     
+                <tr>
+                    <th>千種区</th>
+                    <td>
+                        <a th:href="@{/shops?area=千種区}">千種区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>東区</th>
+                    <td>
+                        <a th:href="@{/shops?area=__${'東区'}__}">東区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>北区</th>
+                    <td>
+                        <a th:href="@{/shops?area=北区}">北区</a>                                    
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>西区</th>
+                    <td>
+                        <a th:href="@{/shops?area=西区}">西区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>中村区</th>
+                    <td>
+                        <a th:href="@{/shops?area=中村区}">中村区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>中区</th>
+                    <td>
+                        <a th:href="@{/shops?area=中区}">中区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>昭和区</th>
+                    <td>
+                        <a th:href="@{/shops?area=昭和区}">昭和区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>瑞穂区</th>
+                    <td>
+                        <a th:href="@{/shops?area=瑞穂区}">瑞穂区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>熱田区</th>
+                    <td>
+                        <a th:href="@{/shops?area=熱田区}">熱田区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>中川区</th>
+                    <td>
+                        <a th:href="@{/shops?area=中川区}">中川区</a>
+                    </td>                                     
+                </tr>            
+                <tr>
+                    <th>港区</th>
+                    <td>
+                        <a th:href="@{/shops?area=港区}">港区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>南区</th>
+                    <td>
+                        <a th:href="@{/shops?area=南区}">南区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>守山区</th>
+                    <td>
+                        <a th:href="@{/shops?area=守山区}">守山区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>緑区</th>
+                    <td>
+                        <a th:href="@{/shops?area=緑区}">緑区</a>
+                    </td>                                     
+                </tr>                                                                                                                                                                                                                                                                                                                                                                           
+                <tr>
+                    <th>名東区</th>
+                    <td>
+                        <a th:href="@{/shops?area=__${'名東区'}__}">名東区</a>
+                    </td>                                     
+                </tr>  
+                <tr>
+                    <th>天白区</th>
+                    <td>
+                        <a th:href="@{/shops?area=天白区}">天白区</a>
+                    </td>                                     
+                </tr>                                                                                                                                                                                                                                                                                                                                                                           
+            </tbody>
+        </table>  
+    </div>
+</div>
+      
+                 </div>
+             </main>
+             
+             <!-- フッター -->
+             <div th:replace="~{fragment :: footer}"></div>
+         </div>    
+         
+         <div th:replace="~{fragment :: scripts}"></div>  
+	</body>
+</html>

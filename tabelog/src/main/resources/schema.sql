@@ -1,0 +1,107 @@
+-- rolesテーブルの作成
+CREATE TABLE IF NOT EXISTS roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- categoriesテーブルの作成
+CREATE TABLE IF NOT EXISTS categories (
+    category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- usersテーブルの作成
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    furigana VARCHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    postal_code VARCHAR(50),
+    address VARCHAR(255),
+    phone_number VARCHAR(50),
+    role_id INT,
+    enabled BOOLEAN DEFAULT TRUE,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+-- shopsテーブルの作成
+CREATE TABLE IF NOT EXISTS shops (
+    shop_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    image_name VARCHAR(255),
+    description TEXT,
+    open_time VARCHAR(10),
+    price INT,
+    postal_code VARCHAR(50),
+    address VARCHAR(255),
+    holiday VARCHAR(50),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+-- reviewsテーブルの作成
+CREATE TABLE IF NOT EXISTS reviews (
+    review_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    shop_id INT NOT NULL,
+    user_id INT NOT NULL,
+    review_text VARCHAR(255),
+    review_score INT CHECK (review_score >= 1 AND review_score <= 5),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- reservationsテーブルの作成
+CREATE TABLE IF NOT EXISTS reservations (
+    reservation_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    shop_id INT NOT NULL,
+    user_id INT NOT NULL,
+    reservation_datetime TIMESTAMP NOT NULL,
+    number_of_people INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+ALTER TABLE reservations
+ADD COLUMN IF NOT EXISTS amount INT;
+
+
+-- admin_infoテーブルの作成
+CREATE TABLE IF NOT EXISTS admin_info (
+    admin_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- favoritesテーブルの作成
+CREATE TABLE IF NOT EXISTS favorites (
+    favorite_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    shop_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id)
+);
+
+CREATE TABLE IF NOT EXISTS verification_tokens (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    token VARCHAR(255) NOT NULL,        
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
